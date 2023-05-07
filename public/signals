@@ -14,7 +14,7 @@
           
           
           if (e.key == "ArrowRight") {
-              window.location.href = 'exit';
+              window.location.href = 'radix-tree';
           }
           
       }
@@ -199,7 +199,7 @@ causing the program to print <code>interrupt</code> and then exit.</p>
       
       
       <p class="next">
-        Next example: <a href="exit">Exit</a>.
+        Next example: <a href="radix-tree">Radix Tree</a>.
       </p>
       
 

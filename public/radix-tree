@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Go by Example: Radix Tree</title>
+    <link rel=stylesheet href="site.css">
+  </head>
+  <script>
+      onkeydown = (e) => {
+          
+          if (e.key == "ArrowLeft") {
+              window.location.href = 'signals';
+          }
+          
+          
+          if (e.key == "ArrowRight") {
+              window.location.href = 'exit';
+          }
+          
+      }
+  </script>
+  <body>
+    <div class="example" id="radix-tree">
+      <h2><a href="./">Go by Example</a>: Radix Tree</h2>
+      
+      <table>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            <a href="https://go.dev/play/p/HP50xj49RGL"><img title="Run code" src="play.png" class="run" /></a><img title="Copy code" src="clipboard.png" class="copy" />
+          <pre class="chroma"><span class="kn">package</span> <span class="nx">main</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&#34;fmt&#34;</span>
+    <span class="s">&#34;strings&#34;</span>
+<span class="p">)</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">type</span> <span class="nx">RadixNode</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">label</span>    <span class="kt">string</span>
+    <span class="nx">children</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">RadixNode</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="nf">NewRadixNode</span><span class="p">(</span><span class="nx">label</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">RadixNode</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">RadixNode</span><span class="p">{</span>
+        <span class="nx">label</span><span class="p">:</span>    <span class="nx">label</span><span class="p">,</span>
+        <span class="nx">children</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">RadixNode</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">type</span> <span class="nx">RadixTree</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">root</span> <span class="o">*</span><span class="nx">RadixNode</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="nf">NewRadixTree</span><span class="p">()</span> <span class="o">*</span><span class="nx">RadixTree</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">RadixTree</span><span class="p">{</span>
+        <span class="nx">root</span><span class="p">:</span> <span class="nf">NewRadixNode</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="nf">longestPrefix</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">s1</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">s2</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">{</span>
+        <span class="nx">i</span><span class="o">++</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">i</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">RadixTree</span><span class="p">)</span> <span class="nf">Insert</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">root</span>
+    <span class="k">for</span> <span class="nb">len</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="nx">prefix</span> <span class="o">:=</span> <span class="nf">longestPrefix</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">label</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">        <span class="k">if</span> <span class="nx">prefix</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">label</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">key</span> <span class="p">=</span> <span class="nx">key</span><span class="p">[</span><span class="nx">prefix</span><span class="p">:]</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">            <span class="k">if</span> <span class="nx">child</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nb">string</span><span class="p">(</span><span class="nx">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])];</span> <span class="nx">ok</span> <span class="p">{</span>
+                <span class="nx">node</span> <span class="p">=</span> <span class="nx">child</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">newNode</span> <span class="o">:=</span> <span class="nf">NewRadixNode</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nb">string</span><span class="p">(</span><span class="nx">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="p">=</span> <span class="nx">newNode</span>
+                <span class="nx">node</span> <span class="p">=</span> <span class="nx">newNode</span>
+            <span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            <p>The key and the current node&rsquo;s label share a prefix
+newNode := NewRadixNode(key[:prefix])
+newNode.children[string(key[prefix])] = node
+node.label = node.label[prefix:]
+node.children = map[string]*RadixNode{string(node.label[0]): node}
+node.label = node.label[1:]
+node = newNode</p>
+
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">            <span class="nx">child1</span> <span class="o">:=</span> <span class="nf">NewRadixNode</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">label</span><span class="p">[</span><span class="nx">prefix</span><span class="p">:])</span>
+            <span class="nx">child2</span> <span class="o">:=</span> <span class="nf">NewRadixNode</span><span class="p">(</span><span class="nx">key</span><span class="p">[</span><span class="nx">prefix</span><span class="p">:])</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            <p>node.children = map[string]*RadixNode{string(node.label[0]): newNode}</p>
+
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">            <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span> <span class="p">{</span>
+                <span class="nx">child1</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">v</span>
+                <span class="nb">delete</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nb">string</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">label</span><span class="p">[</span><span class="nx">prefix</span><span class="p">])]</span> <span class="p">=</span> <span class="nx">child1</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nb">string</span><span class="p">(</span><span class="nx">key</span><span class="p">[</span><span class="nx">prefix</span><span class="p">])]</span> <span class="p">=</span> <span class="nx">child2</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">            <span class="nx">node</span><span class="p">.</span><span class="nx">label</span> <span class="p">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">label</span><span class="p">[:</span><span class="nx">prefix</span><span class="p">]</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma">            <span class="k">return</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="nf">printNode</span><span class="p">(</span><span class="nx">node</span> <span class="o">*</span><span class="nx">RadixNode</span><span class="p">,</span> <span class="nx">indent</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">label</span> <span class="kt">string</span>
+    <span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">label</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+        <span class="nx">label</span> <span class="p">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">label</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">label</span> <span class="p">=</span> <span class="s">&#34;root&#34;</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s%s\n&#34;</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Repeat</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">,</span> <span class="nx">indent</span><span class="p">),</span> <span class="nx">label</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">child</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span> <span class="p">{</span>
+        <span class="nf">printNode</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">indent</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code leading">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="nf">printTree</span><span class="p">(</span><span class="nx">tree</span> <span class="o">*</span><span class="nx">RadixTree</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">printNode</span><span class="p">(</span><span class="nx">tree</span><span class="p">.</span><span class="nx">root</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code">
+            
+          <pre class="chroma"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">tree</span> <span class="o">:=</span> <span class="nf">NewRadixTree</span><span class="p">()</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;bar&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;baz&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;romane&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;romanus&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;romulus&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;rubens&#34;</span><span class="p">)</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;ruber&#34;</span><span class="p">)</span>
+    <span class="nf">printTree</span><span class="p">(</span><span class="nx">tree</span><span class="p">)</span>
+<span class="p">}</span>
+</pre>
+          </td>
+        </tr>
+        
+      </table>
+      
+      <table>
+        
+        <tr>
+          <td class="docs">
+            
+          </td>
+          <td class="code">
+            
+          <pre class="chroma"><span class="go">7fd60a9497546cb5c84242276ed79aecbde7e950
+</span><span class="go">fI2YIfYsCaL</span></pre>
+          </td>
+        </tr>
+        
+      </table>
+      
+      
+      <p class="next">
+        Next example: <a href="exit">Exit</a>.
+      </p>
+      
+
+    <p class="footer">
+      by <a href="https://markmcgranaghan.com">Mark McGranaghan</a> and <a href="https://eli.thegreenplace.net">Eli Bendersky</a> | <a href="https://github.com/mmcgrana/gobyexample">source</a> | <a href="https://github.com/mmcgrana/gobyexample#license">license</a>
+    </p>
+
+    </div>
+    <script>
+      var codeLines = [];
+      codeLines.push('package main\u000A');codeLines.push('import (\u000A    \"fmt\"\u000A    \"strings\"\u000A)\u000A');codeLines.push('type RadixNode struct {\u000A    label    string\u000A    children map[string]*RadixNode\u000A}\u000A');codeLines.push('func NewRadixNode(label string) *RadixNode {\u000A    return \u0026RadixNode{\u000A        label:    label,\u000A        children: make(map[string]*RadixNode),\u000A    }\u000A}\u000A');codeLines.push('type RadixTree struct {\u000A    root *RadixNode\u000A}\u000A');codeLines.push('func NewRadixTree() *RadixTree {\u000A    return \u0026RadixTree{\u000A        root: NewRadixNode(\"\"),\u000A    }\u000A}\u000A');codeLines.push('func longestPrefix(s1, s2 string) int {\u000A    i :\u003D 0\u000A    for i \u003C len(s1) \u0026\u0026 i \u003C len(s2) \u0026\u0026 s1[i] \u003D\u003D s2[i] {\u000A        i++\u000A    }\u000A    return i\u000A}\u000A');codeLines.push('func (t *RadixTree) Insert(key string) {\u000A    node :\u003D t.root\u000A    for len(key) \u003E 0 {\u000A        prefix :\u003D longestPrefix(node.label, key)\u000A');codeLines.push('        if prefix \u003D\u003D len(node.label) {\u000A            key \u003D key[prefix:]\u000A');codeLines.push('            if len(key) \u003D\u003D 0 {\u000A                return\u000A            }\u000A');codeLines.push('            if child, ok :\u003D node.children[string(key[0])]; ok {\u000A                node \u003D child\u000A            } else {\u000A                newNode :\u003D NewRadixNode(key)\u000A                node.children[string(key[0])] \u003D newNode\u000A                node \u003D newNode\u000A            }\u000A');codeLines.push('        } else {\u000A');codeLines.push('            child1 :\u003D NewRadixNode(node.label[prefix:])\u000A            child2 :\u003D NewRadixNode(key[prefix:])\u000A');codeLines.push('            for k, v :\u003D range node.children {\u000A                child1.children[k] \u003D v\u000A                delete(node.children, k)\u000A            }\u000A            node.children[string(node.label[prefix])] \u003D child1\u000A            node.children[string(key[prefix])] \u003D child2\u000A');codeLines.push('            node.label \u003D node.label[:prefix]\u000A');codeLines.push('            return\u000A        }\u000A    }\u000A}\u000A');codeLines.push('func printNode(node *RadixNode, indent int) {\u000A    var label string\u000A    if node.label !\u003D \"\" {\u000A        label \u003D node.label\u000A    } else {\u000A        label \u003D \"root\"\u000A    }\u000A    fmt.Printf(\"%s%s\\n\", strings.Repeat(\" \", indent), label)\u000A    for _, child :\u003D range node.children {\u000A        printNode(child, indent+2)\u000A    }\u000A}\u000A');codeLines.push('func printTree(tree *RadixTree) {\u000A    printNode(tree.root, 0)\u000A}\u000A');codeLines.push('func main() {\u000A    tree :\u003D NewRadixTree()\u000A    tree.Insert(\"foo\")\u000A    tree.Insert(\"bar\")\u000A    tree.Insert(\"baz\")\u000A    tree.Insert(\"romane\")\u000A    tree.Insert(\"romanus\")\u000A    tree.Insert(\"romulus\")\u000A    tree.Insert(\"rubens\")\u000A    tree.Insert(\"ruber\")\u000A    printTree(tree)\u000A}\u000A');codeLines.push('');
+    </script>
+    <script src="site.js" async></script>
+  </body>
+</html>

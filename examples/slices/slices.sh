@@ -1,7 +1,9 @@
 # Note that while slices are different types than arrays,
 # they are rendered similarly by `fmt.Println`.
 $ go run slices.go
-emp: [  ]
+no assigned: [] true true
+runtime error: index out of range [3] with length 3
+emp: [  ] len: 3 cap: 5
 set: [a b c]
 get: c
 len: 3
